@@ -4,6 +4,7 @@ __pycache__/model.cpython-39.pyc
 __pycache__/predit.cpython-39.pyc
 __pycache__/sage_model.cpython-39.pyc
 __pycache__/trainer.cpython-39.pyc
+model/
 model/events.out.tfevents.1666109630.so01.iem.technion.ac.il
 model/events.out.tfevents.1666109682.so01.iem.technion.ac.il
 model/events.out.tfevents.1666109798.so01.iem.technion.ac.il
