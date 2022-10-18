@@ -1,9 +1,7 @@
-from email.policy import default
 import os
 import random
 import torch
 import numpy as np
-import GNNDepthAnalysis.sage_model as SAGE
 from tqdm import tqdm
 from collections import OrderedDict
 from torch_geometric.loader import NeighborLoader
