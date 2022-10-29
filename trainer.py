@@ -7,7 +7,7 @@ from collections import OrderedDict
 from torch_geometric.loader import NeighborLoader
 
 from sage_model import SAGE
-from predit import inference
+from predict import inference
 
 from tensorboardX import SummaryWriter
 
@@ -38,7 +38,7 @@ class Trainer:
             "lr": 0.01,
         },
         "train_log_step": 10,
-        "save_interval": 5
+        "save_interval": 50
     }
 
     def _init_network(self, data, num_classes, max_depth):
@@ -107,7 +107,7 @@ class Trainer:
         criterion = torch.nn.CrossEntropyLoss()
         
 
-        for epoch in range(1, epochs):
+        for epoch in range(step, epochs):
             self.model.train()
 
             total_loss = 0

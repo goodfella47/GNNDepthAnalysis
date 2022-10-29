@@ -21,8 +21,8 @@ def inference(model, loader, depths_list, device):
     return out_all, inference_depths, ids
 
 
-def evaluate_test(model, loader, evaluator, data, device):
-    out, inference_depths, ids = inference(model, loader, device)
+def evaluate_test(model, loader, evaluator, data, depths_list, device):
+    out, inference_depths, ids = inference(model, loader, depths_list, device)
 
     y_true = data.y.cpu()
     y_pred = out.argmax(dim=-1, keepdim=True)
