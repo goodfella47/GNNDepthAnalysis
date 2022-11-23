@@ -1,34 +1,34 @@
 import torch
 import torch.nn.functional as F
-from torch_geometric.nn import SAGEConv, PairNorm
+from torch_geometric.nn import PairNorm
 
 
-class SAGE(torch.nn.Module):
+class GNN(torch.nn.Module):
     
-    def __init__(self, in_channels, 
+    def __init__(self, conv, in_channels, 
                  hidden_channels, out_channels,
                  n_layers=2):
-        super(SAGE, self).__init__()
+        super(GNN, self).__init__()
         
         self.n_layers = n_layers
         self.layers = torch.nn.ModuleList()
         self.layers_bn = torch.nn.ModuleList()
 
         if n_layers == 1:
-            self.layers.append(SAGEConv(in_channels, out_channels, normalize=False))
+            self.layers.append(conv(in_channels, out_channels, normalize=False))
         elif n_layers == 2:
-            self.layers.append(SAGEConv(in_channels, hidden_channels, normalize=False))
+            self.layers.append(conv(in_channels, hidden_channels, normalize=False))
             self.layers_bn.append(torch.nn.BatchNorm1d(hidden_channels))
-            self.layers.append(SAGEConv(hidden_channels, out_channels, normalize=False))
+            self.layers.append(conv(hidden_channels, out_channels, normalize=False))
         else:
-            self.layers.append(SAGEConv(in_channels, hidden_channels, normalize=False))
+            self.layers.append(conv(in_channels, hidden_channels, normalize=False))
             self.layers_bn.append(PairNorm())
 
             for _ in range(n_layers - 2):
-                self.layers.append(SAGEConv(hidden_channels, hidden_channels, normalize=False))
+                self.layers.append(conv(hidden_channels, hidden_channels, normalize=False))
                 self.layers_bn.append(PairNorm())
 
-            self.layers.append(SAGEConv(hidden_channels, out_channels, normalize=False))
+            self.layers.append(conv(hidden_channels, out_channels, normalize=False))
 
         for layer in self.layers:
             layer.reset_parameters()
@@ -54,3 +54,7 @@ class SAGE(torch.nn.Module):
             x = self.layers[-1](x, edge_index)
 
         return x
+    
+
+
+

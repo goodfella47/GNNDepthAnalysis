@@ -5,8 +5,8 @@ import numpy as np
 from tqdm import tqdm
 from collections import OrderedDict
 from torch_geometric.loader import NeighborLoader
-
-from sage_model import SAGE
+from torch_geometric.nn import SAGEConv, GCNConv, GATConv
+from gnn_model import GNN
 from predict import inference
 
 from tensorboardX import SummaryWriter
@@ -34,6 +34,7 @@ class Logger:
 class Trainer:
     default_cfg={
         "optimizer_type": 'adam',
+        "model_type": 'SAGE',
         "lr_cfg":{
             "lr": 0.01,
         },
@@ -43,15 +44,22 @@ class Trainer:
 
     def _init_network(self, data, num_classes, max_depth):
         # network
-        self.model = SAGE(data.x.shape[1], data.x.shape[1], num_classes, n_layers=max_depth)
-
+        if self.cfg['model_type']=='SAGE':
+            self.model = GNN(SAGEConv, data.x.shape[1], data.x.shape[1], num_classes, n_layers=max_depth)
+        elif self.cfg['model_type']=='GCN':
+            self.model = GNN(GCNConv, data.x.shape[1], data.x.shape[1], num_classes, n_layers=max_depth)
+        elif self.cfg['model_type']=='GAT':
+            self.model = GNN(GATConv, data.x.shape[1], data.x.shape[1], num_classes, n_layers=max_depth)
+        else:
+            raise NotImplementedError
+        
         # loss 
         self.val_losses = []
         self.train_losses = []
+        
+        # metrics
         self.criterion = torch.nn.CrossEntropyLoss()
         self.val_metrics = []
-
-        # metrics
 
 
         # optimizer
@@ -76,12 +84,12 @@ class Trainer:
         
         
 
-    def __init__(self, cfg=None):
+    def __init__(self, cfg=None, model_dir='model'):
         if cfg:
             self.cfg = {**self.default_cfg, **cfg}
         else:
             self.cfg = {**self.default_cfg}
-        self.model_dir= 'model'
+        self.model_dir= model_dir
         if not os.path.exists(self.model_dir): os.mkdir(self.model_dir)
         self.pth_fn = os.path.join(self.model_dir,'model.pth')
         self.best_pth_fn = os.path.join(self.model_dir,'model_best.pth')

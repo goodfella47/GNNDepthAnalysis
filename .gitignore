@@ -31,3 +31,5 @@ model/model.pth
 model/train.txt
 baskin2.ipynb
 model/events.out.tfevents.1666119801.so01.iem.technion.ac.il
+model_deep/
+model_shallow/
