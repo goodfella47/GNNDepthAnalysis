@@ -89,6 +89,7 @@ class Trainer:
             self.cfg = {**self.default_cfg, **cfg}
         else:
             self.cfg = {**self.default_cfg}
+        print(self.cfg['model_type'])
         self.model_dir= model_dir
         if not os.path.exists(self.model_dir): os.mkdir(self.model_dir)
         self.pth_fn = os.path.join(self.model_dir,'model.pth')
